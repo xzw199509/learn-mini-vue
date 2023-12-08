@@ -6,6 +6,7 @@ class RefImpl {
   private _value: any
   public dep
   private _rawValue: any
+  public __v_isRef = true
   constructor(value) {
     this._rawValue = value
     this._value = isObject(value) ? reactive(value) : value
@@ -19,7 +20,7 @@ class RefImpl {
   set value(newValue) {
     if (hasChanged(newValue, this._rawValue)) {
       this._rawValue = newValue
-      this._value =  isObject(newValue) ? reactive(newValue) : newValue
+      this._value = isObject(newValue) ? reactive(newValue) : newValue
       triggerEffects(this.dep)
     }
 
@@ -32,4 +33,12 @@ function trackRefValue(ref) {
 }
 export function ref(value) {
   return new RefImpl(value)
+}
+
+export function isRef(ref) {
+  return !!ref.__v_isRef
+}
+export function unRef(ref){
+  // 看看是不是 ref => ref.value
+  return isRef(ref)?ref.value:ref
 }
