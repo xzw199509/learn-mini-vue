@@ -5,14 +5,14 @@ class ReactiveEffect {
   private _fn: any
   deps = []
   active = true
-  onStop?:()=>void
+  onStop?: () => void
   public scheduler: Function | undefined
   constructor(fn, scheduler?: Function) {
     this._fn = fn
     this.scheduler = scheduler
   }
   run() {
-    if(!this.active){
+    if (!this.active) {
       return this._fn()
     }
     shouldTrack = true
@@ -24,14 +24,20 @@ class ReactiveEffect {
   stop() {
     if (this.active) {
       cleanupEffect(this)
-      if(this.onStop){
+      if (this.onStop) {
         this.onStop()
       }
       this.active = false
     }
   }
 }
-function isTracking(){
+export function trackEffects(dep) {
+  // 是否已经添加过
+  if (dep.has(activeEffect)) return
+  dep.add(activeEffect)
+  activeEffect.deps.push(dep)
+}
+export function isTracking() {
   return shouldTrack && activeEffect !== undefined
 }
 function cleanupEffect(effect) {
@@ -41,10 +47,9 @@ function cleanupEffect(effect) {
   effect.deps.length = 0
 }
 
-
 const targetMap = new Map()
 export function track(target, key) {
-  if(!isTracking()) return
+  if (!isTracking()) return
   let depsMap = targetMap.get(target)
   if (!depsMap) {
     depsMap = new Map()
@@ -58,14 +63,21 @@ export function track(target, key) {
   }
   // if(!activeEffect) return
   // if(!shouldTrack) return
-  if(dep.has(activeEffect)) return
-  dep.add(activeEffect)
-  activeEffect.deps.push(dep)
+  trackEffects(dep)
 }
 
 export function trigger(target, key) {
   let depsMap = targetMap.get(target)
   let dep = depsMap.get(key)
+  for (const effect of dep) {
+    if (effect.scheduler) {
+      effect.scheduler()
+    } else {
+      effect.run()
+    }
+  }
+}
+export function triggerEffects(dep) {
   for (const effect of dep) {
     if (effect.scheduler) {
       effect.scheduler()
