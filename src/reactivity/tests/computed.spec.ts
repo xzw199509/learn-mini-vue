@@ -26,5 +26,16 @@ describe("computed", () => {
         // 被调用一次
         expect(getter).toHaveBeenCalledTimes(1)
         
+        cValue.value // get
+        expect(getter).toHaveBeenCalledTimes(1)
+
+        value.foo = 2 // trigger
+        expect(getter).toHaveBeenCalledTimes(1)
+
+        expect(cValue.value).toBe(2)
+        expect(getter).toHaveBeenCalledTimes(2)
+
+        cValue.value // get
+        expect(getter).toHaveBeenCalledTimes(2)
     })
 })
