@@ -15,15 +15,17 @@ function patch(vnode, container) {
 
 }
 function processElement(vnode, container) {
-    const el = document.createElement(vnode.type)
+    mountElement(vnode, container)
+}
+function mountElement(vnode: any, container: any) {
+    // vnode => element =>div
+    const el = (vnode.el = document.createElement(vnode.type))
     const { children } = vnode
 
     if (typeof children === "string") {
         el.textContent = children
     } else if (Array.isArray(children)) {
-        children.forEach(v => {
-            patch(v, el)
-        })
+        mountChildren(vnode, el)
     }
     const { props } = vnode
     for (const key in props) {
@@ -31,18 +33,27 @@ function processElement(vnode, container) {
         el.setAttribute(key, val)
     }
     container.append(el)
+
+}
+function mountChildren(vnode, container) {
+    vnode.children.forEach(v => {
+        patch(v, container)
+    })
 }
 function processComponent(vnode: any, container: any) {
     mountComponent(vnode, container)
 }
-function mountComponent(vnode: any, container: any) {
-    const instance = createComponentInstance(vnode)
+function mountComponent(initiaVNnode: any, container: any) {
+    const instance = createComponentInstance(initiaVNnode)
     setupComponent(instance)
-    setupRenderEffect(instance, container)
+    setupRenderEffect(instance, initiaVNnode, container)
 }
-function setupRenderEffect(instance: any, container: any) {
+function setupRenderEffect(instance: any, initiaVNnode, container: any) {
     const { proxy } = instance
     const subTree = instance.render.call(proxy)
     patch(subTree, container)
+
+    // element => mount 所有的element都挂载结束
+    initiaVNnode.el = subTree.el
 }
 
