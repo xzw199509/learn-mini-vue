@@ -1,14 +1,38 @@
-const vnode = {
-  tag: 'div',
-  props: {
-    onClick: () => {
-      alert('hello')
+// 普通对象
+// const vnode = {
+//   tag: 'div',
+//   props: {
+//     onClick: () => {
+//       alert('hello')
+//     },
+//   },
+//   children: 'click me',
+// }
+
+const MyComponent = function () {
+  return {
+    tag: 'div',
+    props: {
+      onClick: () => {
+        alert('hello')
+      },
     },
-  },
-  children: 'click me',
+    children: 'click me',
+  }
+}
+const vnode = {
+  tag: MyComponent,
 }
 
 function renderer(vnode, container) {
+  if (typeof vnode.tag === 'string') {
+    mountElement(vnode, container)
+  } else if (typeof vnode.tag === 'function') {
+    mountComponent(vnode, container)
+  }
+}
+
+function mountElement(vnode, container) {
   const el = document.createElement(vnode.tag)
 
   for (const key in vnode.props) {
@@ -23,6 +47,9 @@ function renderer(vnode, container) {
   }
   container.appendChild(el)
 }
-
+function mountComponent(vnode, container) {
+  const subtree = vnode.tag()
+  renderer(subtree, container)
+}
 const rootContainer = document.querySelector('#app')
 renderer(vnode, rootContainer)
