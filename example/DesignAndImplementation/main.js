@@ -53,6 +53,7 @@ function mountElement(vnode, container) {
   const el = document.createElement(vnode.tag)
 
   for (const key in vnode.props) {
+    // 将属性中的事件，添加到dom上
     if (/^on/.test(key)) {
       el.addEventListener(key.substring(2).toLowerCase(), vnode.props[key])
     }
