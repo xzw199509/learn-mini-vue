@@ -6,7 +6,16 @@ export const App = {
     window.self = this
     return h(
       'div',
-      { id: 'root', class: ['red', 'hard'] },
+      {
+        id: 'root',
+        class: ['red', 'hard'],
+        onClick() {
+          console.log("onClick run");
+        },
+        onMouseDown() {
+          console.log("onMouseDown run");
+        }
+      },
       'hi,' + this.msg
 
       // [h('p', { class: 'red' }, 'hi'), h('p', { class: 'blue' }, 'hi'), 'hi,' + this.msg]
