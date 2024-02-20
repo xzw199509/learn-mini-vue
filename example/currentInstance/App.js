@@ -1,3 +1,4 @@
+
 import { getCurrentInstance, h } from '../../lib/guide-mini-vue.esm.js'
 import { Foo } from './Foo.js';
 
