@@ -11,14 +11,21 @@ export const App = {
       {
         id: 'root',
         class: ['red', 'hard'],
-        onClick() {
-          console.log("onClick run");
-        },
-        onMouseDown() {
-          console.log("onMouseDown run");
-        }
+        // onClick() {
+        //   console.log("onClick run");
+        // },
+        // onMouseDown() {
+        //   console.log("onMouseDown run");
+        // }
       },
-      [h("div", {}, "hi," + this.msg), h(Foo, { count: 1 })]
+      [h("div", {}, "hi," + this.msg), h(Foo, {
+        count: 1, onAdd(a,b) {
+          console.log("onAdd run",a,b);
+        },
+        onAddFoo(){
+          console.log("onAddFoo run");
+        }
+      })]
       // 'hi,' + this.msg
       // [h('p', { class: 'red' }, 'hi'), h('p', { class: 'blue' }, 'hi'), 'hi,' + this.msg]
     )
