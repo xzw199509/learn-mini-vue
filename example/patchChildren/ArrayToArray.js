@@ -42,7 +42,7 @@ import { ref, h } from '../../lib/guide-mini-vue.esm.js'
 // const prevChildren = [
 //     h("div", { key: "A" }, "A"),
 //     h("div", { key: "B" }, "B"),
-    
+
 // ]
 // const nextChildren = [
 //     h("div", { key: "A" }, "A"),
@@ -56,13 +56,13 @@ import { ref, h } from '../../lib/guide-mini-vue.esm.js'
 // const prevChildren = [
 //     h("div", { key: "A" }, "A"),
 //     h("div", { key: "B" }, "B"),
-    
+
 // ]
 // const nextChildren = [
 //     h("div", { key: "C" }, "C"),
 //     h("div", { key: "A" }, "A"),
 //     h("div", { key: "B" }, "B"),
-   
+
 // ]
 
 // 5. 长度减少
@@ -78,7 +78,7 @@ import { ref, h } from '../../lib/guide-mini-vue.esm.js'
 // const nextChildren = [
 //     h("div", { key: "A" }, "A"),
 //     h("div", { key: "B" }, "B"),
-   
+
 // ]
 
 // 5. 中间部分不同 并且 C 位置不同
@@ -132,20 +132,88 @@ import { ref, h } from '../../lib/guide-mini-vue.esm.js'
 // a b (c e d) f g
 // a b (e c) f g
 
+
+// const prevChildren = [
+//     h("div", { key: "A" }, "A"),
+//     h("div", { key: "B" }, "B"),
+//     h("div", { key: "C", id:"c-prev" }, "C"),
+//     h("div", { key: "E" }, "E"),
+//     h("div", { key: "D" }, "D"),
+//     h("div", { key: "F" }, "F"),
+//     h("div", { key: "G" }, "G"),
+// ]
+// const nextChildren = [
+//     h("div", { key: "A" }, "A"),
+//     h("div", { key: "B" }, "B"),
+//     h("div", { key: "E" }, "E"),
+//     h("div", { key: "C",id:"c-next" }, "C"),
+//     h("div", { key: "F" }, "F"),
+//     h("div", { key: "G" }, "G"),
+// ]
+
+// 中间部分 老的比新的多，那么多出来的直接可以被干掉（优化删除逻辑）
+// a b (c e d) f g
+// a b (e c) f g
+
+
+// const prevChildren = [
+//     h("div", { key: "A" }, "A"),
+//     h("div", { key: "B" }, "B"),
+//     h("div", { key: "C" }, "C"),
+//     h("div", { key: "D" }, "D"),
+//     h("div", { key: "E" }, "E"),
+//     h("div", { key: "F" }, "F"),
+//     h("div", { key: "G" }, "G"),
+// ]
+// const nextChildren = [
+//     h("div", { key: "A" }, "A"),
+//     h("div", { key: "B" }, "B"),
+//     h("div", { key: "E" }, "E"),
+//     h("div", { key: "C" }, "C"),
+//     h("div", { key: "D" }, "D"),
+//     h("div", { key: "F" }, "F"),
+//     h("div", { key: "G" }, "G"),
+// ]
+
+// const prevChildren = [
+//     h("div", { key: "A" }, "A"),
+//     h("div", { key: "B" }, "B"),
+//     h("div", { key: "C" }, "C"),
+//     h("div", { key: "E" }, "E"),
+//     h("div", { key: "F" }, "F"),
+//     h("div", { key: "G" }, "G"),
+// ]
+// const nextChildren = [
+//     h("div", { key: "A" }, "A"),
+//     h("div", { key: "B" }, "B"),
+//     h("div", { key: "E" }, "E"),
+//     h("div", { key: "C" }, "C"),
+//     h("div", { key: "D" }, "D"),
+//     h("div", { key: "F" }, "F"),
+//     h("div", { key: "G" }, "G"),
+// ]
+
+
+
 const prevChildren = [
     h("div", { key: "A" }, "A"),
     h("div", { key: "B" }, "B"),
-    h("div", { key: "C", id:"c-prev" }, "C"),
-    h("div", { key: "E" }, "E"),
+    h("div", { key: "C" }, "C"),
     h("div", { key: "D" }, "D"),
+    h("div", { key: "E" }, "E"),
+    h("div", { key: "Z" }, "Z"),
     h("div", { key: "F" }, "F"),
     h("div", { key: "G" }, "G"),
 ]
 const nextChildren = [
     h("div", { key: "A" }, "A"),
     h("div", { key: "B" }, "B"),
+
+    h("div", { key: "D" }, "D"),
+    h("div", { key: "C" }, "C"),
+
+    h("div", { key: "Y" }, "Y"),
     h("div", { key: "E" }, "E"),
-    h("div", { key: "C",id:"c-next" }, "C"),
     h("div", { key: "F" }, "F"),
     h("div", { key: "G" }, "G"),
 ]
