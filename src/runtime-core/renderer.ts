@@ -4,6 +4,7 @@ import { ShapeFlags } from "../shared/shapeFlags"
 import { createComponentInstance, setupComponent } from "./component"
 import { shouldUpdateComponent } from "./componentUpdateUtils"
 import { createAppApi } from "./createApp"
+import { queueJobs } from "./scheduler"
 
 import { Fragment, Text } from "./vnode"
 
@@ -312,7 +313,14 @@ export function createRenderer(options) {
                 patch(prevSubTree, subTree, container, instance, anchor)
             }
 
-        })
+        },{
+            scheduler(){
+                console.log("update-scheduler");
+                
+                queueJobs(instance.update) // 将更新从同步设置为异步  微任务更新
+            }
+        }
+        )
 
     }
     function updateComponentPreRender(instance, nextVnode) {
