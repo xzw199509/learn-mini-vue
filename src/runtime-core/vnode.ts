@@ -9,6 +9,7 @@ export function createVnode(type, props?, children?) {
         props,
         children,
         key: props && props.key,
+        component:null, // 用于实现组件更新
         shapeFlag: getShapeFlag(type),
         el: null
     }

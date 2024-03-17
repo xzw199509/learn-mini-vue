@@ -9,6 +9,7 @@ export function createComponentInstance(vnode, parent) {
     const component = {
         vnode,
         type: vnode.type,
+        next: null, // 下次要更新的虚拟节点
         setupState: {},
         props: {},
         slots: {},
@@ -40,7 +41,7 @@ function setupStatefulComponent(instance: any) {
         setCurrentInstance(null)
         handleSetupResult(instance, setupResult)
     }
-   
+
 
 }
 

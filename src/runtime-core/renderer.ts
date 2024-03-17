@@ -2,6 +2,7 @@ import { effect } from "../reactivity/effect"
 import { EMPTY } from "../shared"
 import { ShapeFlags } from "../shared/shapeFlags"
 import { createComponentInstance, setupComponent } from "./component"
+import { shouldUpdateComponent } from "./componentUpdateUtils"
 import { createAppApi } from "./createApp"
 
 import { Fragment, Text } from "./vnode"
@@ -259,15 +260,32 @@ export function createRenderer(options) {
         })
     }
     function processComponent(n1, n2: any, container: any, parentComponent, anchor) {
-        mountComponent(n2, container, parentComponent, anchor)
+        if (!n1) {
+            mountComponent(n2, container, parentComponent, anchor)
+        } else {
+            updateComponent(n1, n2)
+        }
+
+    }
+    function updateComponent(n1, n2) {
+        const instance = n2.component = n1.component
+        if (shouldUpdateComponent(n1, n2)) {
+           
+            instance.next = n2
+            instance.update()
+        } else {
+            n2.el = n1.el
+            instance.vnode = n2
+        }
+
     }
     function mountComponent(initiaVNnode: any, container: any, parentComponent, anchor) {
-        const instance = createComponentInstance(initiaVNnode, parentComponent)
+        const instance = initiaVNnode.component = createComponentInstance(initiaVNnode, parentComponent)
         setupComponent(instance)
         setupRenderEffect(instance, initiaVNnode, container, anchor)
     }
     function setupRenderEffect(instance: any, initiaVNnode, container: any, anchor) {
-        effect(() => {
+        instance.update = effect(() => {
             if (!instance.isMounted) {
                 const { proxy } = instance
                 const subTree = instance.subTree = instance.render.call(proxy)
@@ -277,6 +295,13 @@ export function createRenderer(options) {
                 initiaVNnode.el = subTree.el
                 instance.isMounted = true
             } else {
+                // 获取到更新后的vnode
+                // 需要更新 component props el
+                const { next, vnode } = instance
+                if (next) {
+                    next.el = vnode.el
+                    updateComponentPreRender(instance, next)
+                }
                 const { proxy } = instance
                 const subTree = instance.render.call(proxy)
                 const prevSubTree = instance.subTree
@@ -289,6 +314,11 @@ export function createRenderer(options) {
 
         })
 
+    }
+    function updateComponentPreRender(instance, nextVnode) {
+        instance.vnode = nextVnode
+        instance.next = null
+        instance.props = nextVnode.props
     }
     // 获取最长递增子数列
     // 例子：
